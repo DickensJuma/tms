@@ -30,6 +30,28 @@ exports.signup = async (req, res) => {
   res.json({code: 201, token, user});
 };
 
+/**
+ * @swagger
+ * /signin:
+ *   post:
+ *     summary: User Signin
+ *     description: Authenticate and sign in a user.
+ *     tags:
+ *       - Authentication
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/UserSignin'
+ *     responses:
+ *       200:
+ *         description: User successfully signed in.
+ *       401:
+ *         description: Unauthorized access.
+ *       500:
+ *         description: Internal server error.
+ */
 exports.signin = async (req, res) => {
   const { email, password } = req.body;
   const user = await User.findOne({ email });

@@ -1,9 +1,13 @@
 // Packages
 //const expressValidator = require("express-validator");
+
 const express = require("express");
 require("express-async-errors");
 const cors = require("cors");
 require("dotenv").config();
+const swaggerUi = require('swagger-ui-express');
+const swaggerSpec = require('./swaggerConfig');
+
 const app = express();
 
 // Import methods
@@ -22,6 +26,7 @@ app.use(express.json());
 // app.use(expressValidator());
 app.use(express.static("public"));
 app.use(express.urlencoded({ extended: true }));
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // Routes
 app.get("/", (req, res) => {
