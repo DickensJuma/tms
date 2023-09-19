@@ -5,6 +5,9 @@
   "repository": "https://github.com/ujjalacharya/dhan-gaadi.git",
   "author": "Ujjal Acharya <acharyaujjal1@gmail.com>",
   "license": "MIT",
+  "engines": {
+    "node": ">=14.20.1"
+  },
   "scripts": {
     "start": "node server.js",
     "client": "cd client && yarn start",
