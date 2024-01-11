@@ -1,6 +1,10 @@
 const Owner = require("../models/Owner");
 const jwt = require("jsonwebtoken");
 const _ = require("lodash");
+const dotenv = require("dotenv");
+const bcrypt = require("bcryptjs");
+
+dotenv.config();
 
 
 exports.signup = async (req, res) => {
@@ -46,7 +50,8 @@ exports.signin = async (req, res) => {
    console.log("================ SIGNIN : ===============",req.body, owner, payload)
   
      const token = jwt.sign(payload, process.env.JWT_SECRET, {
-      expiresIn: '1h', // Set the expiration time for the token
+      algorithm: 'HS256',
+      expiresIn: '24h', // Set the expiration time for the token
     })
      console.log("TOKEN: ", token)
 
@@ -87,8 +92,10 @@ exports.requireOwnerSignin = async (req, res, next) => {
   if (token) {
     const owner = parseToken(token);
 
-    const foundowner = await Owner.findById(owner._id).select("name role salt hashed_password");
+    console.log("owner", owner)
 
+    const foundowner = await Owner.findById(owner._id).select("name role salt hashed_password");
+         console.log("foundowner", foundowner)
     if (foundowner) {
       req.ownerauth = foundowner;
       next();
@@ -99,9 +106,12 @@ exports.requireOwnerSignin = async (req, res, next) => {
 };
 
 function parseToken(token) {
+  console.log(process.env.JWT_SECRET)
+  console.log("token", token)
   try {
     return jwt.verify(token.split(" ")[1], process.env.JWT_SECRET);
   } catch (err) {
+    console.log("err", err)
     return false;
   }
 }

@@ -1,7 +1,10 @@
 const User = require("../models/User");
 const jwt = require("jsonwebtoken");
 const _ = require("lodash");
+const dotenv = require("dotenv");
 const bcrypt = require("bcryptjs");
+
+dotenv.config();
 
 const { sendEmail } = require("../helpers");
 
@@ -53,8 +56,13 @@ exports.signup = async (req, res) => {
  *         description: Internal server error.
  */
 exports.signin = async (req, res) => {
-  const { email, password } = req.body;
-  const user = await User.findOne({ email });
+  const { email, password , phone_number} = req.body;
+  const user = await User.findOne({ 
+    $or: [
+      email ? { email: email } : { phone: phone_number }
+
+    ]
+  })
 
   console.log(user);
 
@@ -74,7 +82,8 @@ exports.signin = async (req, res) => {
   const payload = {
     _id: user.id,
     name: user.name,
-    email: user.email
+    email: user.email,
+    phone: user.phone,
   };
 
   const token = jwt.sign(
@@ -83,7 +92,7 @@ exports.signin = async (req, res) => {
     // {expiresIn:"1h"}
   );
 
-  return res.json({ token });
+  return res.json({ token , user:payload});
 };
 
 exports.requireUserSignin = async (req, res, next) => {
