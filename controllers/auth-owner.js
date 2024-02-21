@@ -11,6 +11,7 @@ exports.signup = async (req, res) => {
   const ownerExists = await Owner.findOne({ email: req.body.email });
   if (ownerExists)
     return res.status(403).json({
+      status: "FAILED",
       error: "Email is taken!"
     });
   const newowner = new Owner(req.body);
@@ -18,7 +19,7 @@ exports.signup = async (req, res) => {
 
   owner.salt = undefined;
   owner.hashed_password = undefined;
-  res.json(owner);
+  res.status(201).json({ status: "OK",owner});
 };
 
 exports.signin = async (req, res) => {
@@ -29,12 +30,14 @@ exports.signin = async (req, res) => {
   
     if (!owner) {
       return res.status(401).json({
+        status: "FAILED",
         error: "owner with that email does not exist."
       });
     }
   
     if (!owner.authenticate(password)) {
       return res.status(401).json({
+        status: "FAILED",
         error: "Email and password do not match"
       });
     }
@@ -59,7 +62,7 @@ exports.signin = async (req, res) => {
   
   } catch (error) {
     console.log("err", error)
-    return res.status(500).json({message: error})
+    return res.status(500).json({ status: "FAILED", message: error})
   }
 };
 
@@ -83,7 +86,7 @@ exports.refreshToken = async (req, res) => {
 
     return res.json({ token });
   }
-  return res.json({ error: "Invalid content" });
+  return res.json({  status: "FAILED",error: "Invalid content" });
 };
 
 exports.requireOwnerSignin = async (req, res, next) => {
@@ -99,15 +102,15 @@ exports.requireOwnerSignin = async (req, res, next) => {
     if (foundowner) {
       req.ownerauth = foundowner;
       next();
-    } else res.status(401).json({ error: "Not authorized!" });
+    } else res.status(401).json({ status: "FAILED", error: "Not authorized!" });
   } else {
-    res.status(401).json({ error: "Not authorized" });
+    res.status(401).json({  status: "FAILED",error: "Not authorized" });
   }
 };
 
 function parseToken(token) {
   console.log(process.env.JWT_SECRET)
-  console.log("token", token)
+  //console.log("token", token)
   try {
     return jwt.verify(token.split(" ")[1], process.env.JWT_SECRET);
   } catch (err) {
@@ -129,7 +132,7 @@ exports.requireSuperadminSignin = async (req, res, next) => {
       next();
     } else res.status(401).json({ error: "Not authorized!" });
   } else {
-    res.status(401).json({ error: "Not authorized" });
+    res.status(401).json({  status: "FAILED",error: "Not authorized" });
   }
 };
 
@@ -145,6 +148,7 @@ exports.isPoster = (req, res, next) => {
 
   if (!isPoster) {
     return res.status(403).json({
+      status: "FAILED",
       error: "User is not authorized to perform this action"
     });
   }
@@ -164,6 +168,7 @@ exports.isBookingOwner = (req, res, next) => {
 
   if (!isPoster) {
     return res.status(403).json({
+      status: "FAILED",
       error: "User is not authorized to perform this action"
     });
   }
@@ -177,6 +182,7 @@ exports.isAuth = (req, res, next) => {
     req.ownerprofile._id.toString() === req.ownerauth._id.toString();
   if (!user) {
     return res.status(403).json({
+      status: "FAILED",
       error: "Access denied"
     });
   }

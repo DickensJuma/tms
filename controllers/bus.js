@@ -6,12 +6,15 @@ const fs = require("fs");
 const { checkDateAvailability } = require("../helpers");
 
 exports.busBySlug = async (req, res, next, slug) => {
+  console.log("busBySlug", slug);
   const bus = await Bus.findOne({ slug }).populate("owner", "name role");
   if (!bus) {
     return res.status(400).json({
+      status: "FAILED",
       error: "Bus not found"
     });
   }
+  //console.log("busBySlug", bus);
   req.bus = bus; // adds bus object in req with bus info
   next();
 };
@@ -67,7 +70,7 @@ exports.getUnavailableBusesOfOwner = async (req, res) => {
 
 exports.searchBus = async (req, res) => {
   if (_.size(req.query) < 1)
-    return res.status(400).json({ error: "Invalid query" });
+    return res.status(400).json({  status: "FAILED", error: "Invalid query" });
 
   const { startLocation, endLocation, journeyDate } = req.query;
 

@@ -25,7 +25,7 @@ exports.userSignupValidator = [
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       const errorMessages = errors.array().map((error) => error.msg);
-      return res.status(400).json({ error: errorMessages });
+      return res.status(400).json({ status: "FAILED",  error: errorMessages });
     }
     next(); // Proceed to the next middleware if there are no validation errors
   },

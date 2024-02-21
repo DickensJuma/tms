@@ -19,7 +19,7 @@ exports.ownerById = async (req, res, next, id) => {
     req.ownerprofile = owner;
     next();
   } else {
-    res.status(400).json({ error: "Owner not found!" });
+    res.status(400).json({ status: "FAILED", error: "Owner not found!" });
   }
 };
 

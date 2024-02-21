@@ -18,7 +18,10 @@ exports.bookingById = async (req, res, next, id) => {
 exports.getAllBookings = async (req, res) => {
   const bookings = await Booking.find({}).populate("bus owner guest user self");
 
-  res.json(bookings);
+  res.status(200).json({
+    data: bookings,
+    status: "OK"
+  });
 };
 
 exports.getOwnerBookings = async (req, res) => {
@@ -26,11 +29,19 @@ exports.getOwnerBookings = async (req, res) => {
     "bus owner guest user self"
   );
 
-  res.json(bookings);
+  res.status(200).json({
+    data: bookings,
+    status: "OK"
+  
+  });
+
 };
 
 exports.postBooking = async (req, res) => {
   const booking = new Booking(req.body);
+
+  //console.log("req.userauth", req.userauth);
+
   if (req.userauth) {
     booking.user = req.userauth;
   } else {
@@ -54,6 +65,9 @@ exports.postBooking = async (req, res) => {
 
   const bus = await Bus.findOne({ slug: req.bus.slug });
 
+  // console.log("bus", bus);
+  // console.log("booking", booking);
+
   if (
     bus.seatsAvailable < (req.body.passengers || booking.passengers) ||
     bus.isAvailable !== true ||
@@ -75,7 +89,13 @@ exports.postBooking = async (req, res) => {
   await booking.save();
   await bus.save();
 
-  res.json(booking);
+  res.status(201).json({
+    data: booking,
+    message: "Booking successful",
+    status: "OK"
+  
+  
+  });
 };
 
 exports.postSold = async (req, res) => {
@@ -106,7 +126,11 @@ exports.postSold = async (req, res) => {
   await booking.save();
   await bus.save();
 
-  res.json(booking);
+  res.status(201).json({
+    data: booking,
+    message: "Booking successful",
+    status: "OK"
+  });
 };
 
 exports.changeVerificationStatus = async (req, res) => {
@@ -116,7 +140,10 @@ exports.changeVerificationStatus = async (req, res) => {
 
   await booking.save();
 
-  res.json(booking);
+  res.status(200).json({
+    data: booking,
+    status: "OK"
+  });
 };
 
 exports.deleteBooking = async (req, res) => {
@@ -141,5 +168,8 @@ exports.deleteBooking = async (req, res) => {
   await booking.remove();
   await bus.save();
 
-  res.json(booking);
+  res.status(204).json({
+    message: "Booking deleted",
+    status: "OK"
+  });
 };

@@ -16,7 +16,7 @@ exports.userById = async (req, res, next, id) => {
     req.userprofile = user;
     next();
   } else {
-    res.status(400).json({ error: "User not found!" });
+    res.status(400).json({ status: "FAILED",error: "User not found!" });
   }
 };
 

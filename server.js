@@ -30,7 +30,7 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // Routes
 app.get("/", (req, res) => {
-  res.redirect("/api/users");
+   res.send("Welome to TMS")
 });
 
 app.use("/api/auth-owner", require("./routes/auth-owner"));
@@ -42,6 +42,7 @@ app.use("/api/locations", require("./routes/location"));
 app.use("/api/owners", require("./routes/owner"));
 app.use("/api/travels", require("./routes/travel"));
 app.use("/api/users", require("./routes/user"));
+app.use("/api/wallet", require("./routes/wallet")); 
 
 // Error handling middleware
 app.use(function (err, req, res, next) {

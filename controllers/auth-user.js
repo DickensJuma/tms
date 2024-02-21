@@ -12,6 +12,7 @@ exports.signup = async (req, res) => {
   const userExists = await User.findOne({ email: req.body.email });
   if (userExists)
     return res.status(403).json({
+      status: "FAILED",
       error: "Email is taken!"
     });
 
@@ -68,12 +69,14 @@ exports.signin = async (req, res) => {
 
   if (!user) {
     return res.status(401).json({
+      status: "FAILED",
       error: "User with that email does not exist."
     });
   }
 
   if (!user.authenticate(password)) {
     return res.status(401).json({
+      status: "FAILED",
       error: "Email and password do not match"
     });
   }
@@ -106,9 +109,9 @@ exports.requireUserSignin = async (req, res, next) => {
     if (founduser) {
       req.userauth = founduser;
       next();
-    } else res.status(401).json({ error: "Not authorized!" });
+    } else res.status(401).json({  status: "FAILED",error: "Not authorized!" });
   } else {
-    res.status(401).json({ error: "Not authorized" });
+    res.status(401).json({  status: "FAILED",error: "Not authorized" });
   }
 };
 
@@ -119,6 +122,8 @@ exports.checkUserSignin = async (req, res, next) => {
     const user = parseToken(token);
 
     const founduser = await User.findById(user._id).select("name");
+
+    console.log("FOUND USER",founduser);
 
     if (founduser) {
       req.userauth = founduser;
@@ -131,7 +136,7 @@ function parseToken(token) {
   try {
     return jwt.verify(token.split(" ")[1], process.env.JWT_SECRET);
   } catch (err) {
-    return res.status(400).json({ error: err.message });
+    return res.status(400).json({  status: "FAILED",error: err.message });
   }
 }
 
@@ -168,7 +173,7 @@ exports.refreshToken = async (req, res) => {
 
     return res.json({ token });
   }
-  return res.json({ error: "Invalid content" });
+  return res.json({ status: "FAILED", error: "Invalid content" });
 };
 
 exports.socialLogin = async (req, res) => {
@@ -214,6 +219,7 @@ exports.forgotPassword = async (req, res) => {
   // if err or no user
   if (!user)
     return res.status("401").json({
+      status: "FAILED",
       error: "User with that email does not exist!"
     });
 
@@ -251,6 +257,7 @@ exports.resetPassword = async (req, res) => {
   // if err or no user
   if (!user)
     return res.status(401).json({
+      status: "FAILED",
       error: "Invalid Link!"
     });
 
@@ -265,6 +272,7 @@ exports.resetPassword = async (req, res) => {
   user.save((err, result) => {
     if (err) {
       return res.status(400).json({
+        status: "FAILED",
         error: err
       });
     }

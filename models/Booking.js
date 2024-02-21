@@ -35,3 +35,17 @@ const bookingSchema = new mongoose.Schema(
 );
 
 module.exports = mongoose.model("Booking", bookingSchema);
+
+
+// example of a booking object
+// {
+//   "price": "500",
+//   "passengers": 1,
+//   "seatNumber": "A1",
+//   "boardingPoints": "Nairobi",
+//   "guest": "5f8d8e0d4b6e2c0017f1
+//   "user": "5f8d8e0d4b6e2c0017f1",
+//   "owner": "5f8d8e0d4b6e2c0017f1",
+//   "bus": "5f8d8e0d4b6e2c0017f1",
+//   "self": "5f8d8e0d4b6e2c0017f1",
+// }
